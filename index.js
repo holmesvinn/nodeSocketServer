@@ -1,6 +1,6 @@
 const app = require("express");
-const http = require("http").Server(app);
-const io = require("socket.io")(http);
+const https = require("https").Server(app);
+const io = require("socket.io")(https);
 const { Wit, log } = require("node-wit");
 const math = require("mathjs");
 const wordnet = require("wordnet");
@@ -141,6 +141,7 @@ function processWitResponse(raw_response) {
 }
 
 io.on("connection", (socket) => {
+  console.log('new connection initiated')
   let user;
   socket.on('uuid', (value) => {
     user = value;
@@ -167,4 +168,4 @@ io.on("connection", (socket) => {
 
 
 console.log("port available: ", process.env.PORT);
-http.listen(process.env.PORT || 4444);
+https.listen(process.env.PORT || 4444);
