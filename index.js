@@ -165,7 +165,6 @@ io.on("connection", (socket) => {
 
 });
 
-process.on('unCaughtException', )
 
 console.log("port available: ", process.env.PORT);
 http.listen(process.env.PORT || 4444);
