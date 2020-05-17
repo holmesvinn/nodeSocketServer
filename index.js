@@ -166,9 +166,6 @@ io.on("connection", (socket) => {
   });
 });
 
-http.get("/", function (req, res) {
-  res.send("test");
-});
 
 const port = process.env.PORT;
 console.log("port available: ", port);
