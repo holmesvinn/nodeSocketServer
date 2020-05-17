@@ -1,6 +1,6 @@
 const app = require("express");
-const https = require("https").Server(app);
-const io = require("socket.io")(https);
+const http = require("http").Server(app);
+const io = require("socket.io")(http);
 const { Wit, log } = require("node-wit");
 const math = require("mathjs");
 const wordnet = require("wordnet");
@@ -61,7 +61,7 @@ function processWitResponse(raw_response) {
                     raw_response.entities.search_query[0].value
                 ),
                 function (err, def) {
-                  if(err) throw new Error('cant find the meaning');
+                  if (err) throw new Error("cant find the meaning");
                   def.forEach(function (definition) {
                     resolve(definition.glossary);
                   });
@@ -76,7 +76,7 @@ function processWitResponse(raw_response) {
               );
               const word = arr[arr.length - 1];
               wordnet.lookup(word, function (err, def) {
-                if(err) throw new Error('cant find the meaning');
+                if (err) throw new Error("cant find the meaning");
                 def.forEach(function (definition) {
                   resolve(definition.glossary);
                 });
@@ -90,7 +90,7 @@ function processWitResponse(raw_response) {
               );
               const word = arr[arr.length - 1];
               wordnet.lookup(word, function (err, def) {
-                if(err) throw new Error('cant find the meaning');
+                if (err) throw new Error("cant find the meaning");
                 def.forEach(function (definition) {
                   resolve(definition.glossary);
                 });
@@ -119,7 +119,8 @@ function processWitResponse(raw_response) {
                   resolve("fine..ill try to improve");
                   break;
               }
-            } else {s
+            } else {
+              s;
               resolve("thanks!");
             }
             break;
@@ -141,9 +142,9 @@ function processWitResponse(raw_response) {
 }
 
 io.on("connection", (socket) => {
-  console.log('new connection initiated')
+  console.log("new connection initiated");
   let user;
-  socket.on('uuid', (value) => {
+  socket.on("uuid", (value) => {
     user = value;
     socket.on(user, (value) => {
       client
@@ -152,20 +153,25 @@ io.on("connection", (socket) => {
           const result = processWitResponse(response);
           result
             .then((res) => {
-              io.emit(user+'response', String(res));
+              io.emit(user + "response", String(res));
             })
             .catch((err) => {
-              io.emit(user+'response', String(err));
+              io.emit(user + "response", String(err));
             });
         })
         .catch((err) => {
-          io.emit(user+'response', err);
+          io.emit(user + "response", err);
         });
     });
-  })
-
+  });
 });
 
+http.get("/", function (req, res) {
+  res.send("test");
+});
 
-console.log("port available: ", process.env.PORT);
-https.listen(process.env.PORT || 4444);
+const port = process.env.PORT;
+console.log("port available: ", port);
+http.listen(port, () => {
+  console.log("server started at ", process.env.url, ":", port);
+});
