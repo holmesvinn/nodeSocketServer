@@ -204,6 +204,6 @@ app.post('/message', (req,res) => {
         });
 })
 
-app.listen(3000, ()=> {
-  console.log("server running on 3000")
+app.listen(process.env.PORT || 8080, ()=> {
+  console.log("server running on ", process.env.PORT || 8080)
 })
