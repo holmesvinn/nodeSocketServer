@@ -178,9 +178,8 @@ app.get('/', (req,res) => {
   res.json({"status":200, "name": "Tweak", "function":"chatbot"})
 })
 
-app.get('/message', (req,res) => {
-  console.log(req)
-  const message = req.query.message;
+app.post('/message', (req,res) => {
+  const message = req.body.message;
 
   client
         .message(message, {})
@@ -189,29 +188,20 @@ app.get('/message', (req,res) => {
           result
             .then((result) => {
               // io.emit(user + "response", String(res));
-              res.send(String(result))
+              res.json({
+                message:String(result)})
             })
             .catch((err) => {
-              res.send(String(err))
+              res.json({
+                message:String(err)})
             });
         })
         .catch((err) => {
-          res.send(String(err))
+          res.json({
+            message:String(err)})
         });
 })
 
 app.listen(3000, ()=> {
   console.log("server running on 3000")
 })
-// const port = 8080;
-// console.log("port available: ", port);
-
-// const server = http.createServer(function(req,res) {
-//   console.log('request received from :', req.url);
-//   res.writeHead(404);
-//   res.end();
-// })
-
-// server.listen(port, () => {
-//   console.log("server started at ", process.env.url, ":", port);
-// });
