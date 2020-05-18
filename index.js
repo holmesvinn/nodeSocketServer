@@ -167,8 +167,7 @@ io.on("connection", (socket) => {
 });
 
 
-const port = process.env.PORT;
-console.log("port available: ", port);
+const port = 4444;
 http.listen(port, () => {
   console.log("server started at ", process.env.url, ":", port);
 });
