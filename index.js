@@ -171,6 +171,19 @@ process.on('uncaughtException', err => {
   process.exit(1)
 })
 
+process.on('beforeExit', code => {
+  // Can make asynchronous calls
+  setTimeout(() => {
+    console.log(`Process will exit with code: ${code}`)
+    process.exit(code)
+  }, 100)
+})
+
+process.on('exit', code => {
+  // Only synchronous calls
+  console.log(`Process exited with code: ${code}`)
+})
+
 const port = 4444;
 http.listen(port, () => {
   console.log("server started at ", process.env.url, ":", port);
