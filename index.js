@@ -166,6 +166,10 @@ io.on("connection", (socket) => {
   });
 });
 
+process.on('uncaughtException', err => {
+  console.log(`Uncaught Exception: ${err.message}`)
+  process.exit(1)
+})
 
 const port = 4444;
 http.listen(port, () => {
