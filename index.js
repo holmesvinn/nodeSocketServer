@@ -1,12 +1,19 @@
-const app = require("express");
-const http = require("https").Server(app);
-const io = require("socket.io")(http);
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
 const { Wit, log } = require("node-wit");
 const math = require("mathjs");
 const wordnet = require("wordnet");
 const client = new Wit({
   accessToken: "2TKBSE3TDXMVZAME75GWBTFUQCB3AAVB",
 });
+const app = express();
+
+app.use(cors());
+
+// Configuring body parser middleware
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 function processWitResponse(raw_response) {
   return new Promise(function (resolve, reject) {
@@ -141,34 +148,70 @@ function processWitResponse(raw_response) {
   });
 }
 
-io.on("connection", (socket) => {
-  console.log("new connection initiated");
-  let user;
-  socket.on("uuid", (value) => {
-    user = value;
-    socket.on(user, (value) => {
-      client
-        .message(value, {})
+// io.on("connection", (socket) => {
+//   console.log("new connection initiated");
+//   let user;
+//   socket.on("uuid", (value) => {
+//     user = value;
+//     socket.on(user, (value) => {
+//       client
+//         .message(value, {})
+//         .then(async (response) => {
+//           const result = processWitResponse(response);
+//           result
+//             .then((res) => {
+//               io.emit(user + "response", String(res));
+//             })
+//             .catch((err) => {
+//               io.emit(user + "response", String(err));
+//             });
+//         })
+//         .catch((err) => {
+//           io.emit(user + "response", err);
+//         });
+//     });
+//   });
+// // });
+
+
+app.get('/', (req,res) => {
+  res.json({"status":200, "name": "Tweak", "function":"chatbot"})
+})
+
+app.get('/message', (req,res) => {
+  console.log(req)
+  const message = req.query.message;
+
+  client
+        .message(message, {})
         .then(async (response) => {
           const result = processWitResponse(response);
           result
-            .then((res) => {
-              io.emit(user + "response", String(res));
+            .then((result) => {
+              // io.emit(user + "response", String(res));
+              res.send(String(result))
             })
             .catch((err) => {
-              io.emit(user + "response", String(err));
+              res.send(String(err))
             });
         })
         .catch((err) => {
-          io.emit(user + "response", err);
+          res.send(String(err))
         });
-    });
-  });
-});
+})
 
+app.listen(3000, ()=> {
+  console.log("server running on 3000")
+})
+// const port = 8080;
+// console.log("port available: ", port);
 
-const port = process.env.PORT;
-console.log("port available: ", port);
-http.listen(port, () => {
-  console.log("server started at ", process.env.url, ":", port);
-});
+// const server = http.createServer(function(req,res) {
+//   console.log('request received from :', req.url);
+//   res.writeHead(404);
+//   res.end();
+// })
+
+// server.listen(port, () => {
+//   console.log("server started at ", process.env.url, ":", port);
+// });
