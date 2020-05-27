@@ -5,7 +5,7 @@ const { Wit, log } = require("node-wit");
 const math = require("mathjs");
 const wordnet = require("wordnet");
 const client = new Wit({
-  accessToken: "2TKBSE3TDXMVZAME75GWBTFUQCB3AAVB",
+  accessToken: "your_wit.ai_access_Token",
 });
 const app = express();
 
